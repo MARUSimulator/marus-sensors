@@ -54,7 +54,9 @@ This sensor generates 3D sonar images. It casts a number of acoustic rays (both 
 
 ## Pose sensor
 
-The sensor tracks the 3D position  and orientation of the object it is attached to. Orientation is represented as a quaternion, which is a standard way of encoding 3D rotations.
+This sensor records the object's local position in Unity, orientation, linear velocity, and angular velocity in Unity.
+
+
 
 
 
