@@ -12,27 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Marus.Visualization;
 using Unity.Collections;
 using UnityEngine;
+using Marus.Core; // Added Core dependency
+using System;
 
 namespace Marus.Sensors
 {
-
     /// <summary>
     /// Lidar that cast N rays evenly distributed in configured field of view.
-    /// Implemented using IJobParallelFor on CPU 
+    /// Implemented using IJobParallelFor on CPU
     /// Can drop performance
     /// </summary>
-    public class Sonar2D : SensorBase
+    public class Sonar2D : SensorBase, IPointCloudSensor // Implemented Interface
     {
-
-        /// Instantiates 3 Jobs: 
+        /// Instantiates 3 Jobs:
         /// 1) RaycastCommand creation - create raycast commands <see cref="RaycastCommand"> for lidar FoV
         /// 2) RaycastCommand execution
         /// 3) RaycastHit data interpretation - extract points, distances etc.
-
-
 
         /// <summary>
         /// Material set for point cloud display
@@ -53,14 +50,15 @@ namespace Marus.Sensors
         const float TWOPI = Mathf.PI * 2;
         const float WATER_LEVEL = 0;
 
+        // Interface events
+        public event Action<GameObject, string, int, Material, ComputeShader> OnPointCloudInitialized;
+        public event Action<NativeArray<Vector3>> OnPointCloudUpdated;
 
-        // Start is called before the first frame update
-        PointCloudManager _pointCloudManager;
         RaycastJobHelper<SonarReading> _raycastHelper;
         Coroutine _coroutine;
+
         void Start()
         {
-
             int totalRays = Resolution;
 
             pointsCopy = new NativeArray<Vector3>(totalRays, Allocator.Persistent);
@@ -68,14 +66,16 @@ namespace Marus.Sensors
             var directionsLocal = RaycastJobHelper.EvenlyDistributeRays(Resolution, 1, FieldOfView, 0);
             _raycastHelper = new RaycastJobHelper<SonarReading>(gameObject, directionsLocal, OnSonarHit, OnFinish);
 
-            _pointCloudManager = PointCloudManager.CreatePointCloud(name + "_PointClout", totalRays, ParticleMaterial, pointCloudShader);
-            _coroutine = StartCoroutine(_raycastHelper.RaycastInLoop());
+            // Invoke event instead of hardcoding PointCloudManager
+            OnPointCloudInitialized?.Invoke(gameObject, name + "_PointCloud", totalRays, ParticleMaterial, pointCloudShader);
 
+            _coroutine = StartCoroutine(_raycastHelper.RaycastInLoop());
         }
 
         protected override void SampleSensor()
         {
-            _pointCloudManager.UpdatePointCloud(pointsCopy);
+            // Invoke event instead of hardcoding PointCloudManager
+            OnPointCloudUpdated?.Invoke(pointsCopy);
         }
 
         private void OnFinish(NativeArray<Vector3> points, NativeArray<SonarReading> reading)
@@ -106,7 +106,5 @@ namespace Marus.Sensors
             }
             return sonarReading;
         }
-
     }
-
 }

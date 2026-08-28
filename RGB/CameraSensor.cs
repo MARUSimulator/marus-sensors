@@ -17,7 +17,7 @@ using UnityEngine.Rendering;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using Marus.Sensors.Core;
+using Marus.Core;
 
 namespace Marus.Sensors
 {

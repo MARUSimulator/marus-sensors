@@ -16,6 +16,7 @@ using System;
 using Std;
 using UnityEngine;
 using Marus.Utils;
+using Marus.Core;
 
 namespace Marus.Sensors.Primitive
 {

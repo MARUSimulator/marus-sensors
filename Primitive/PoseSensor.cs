@@ -16,6 +16,7 @@ using System;
 using UnityEngine;
 using Marus.Utils;
 using Std;
+using Marus.Core;
 
 namespace Marus.Sensors.Primitive
 {
@@ -40,7 +41,7 @@ namespace Marus.Sensors.Primitive
         [ReadOnly] public Vector3 AngularVelocity;
 
         public Rigidbody measuredObject;
-      
+
         void Start()
         {
             measuredObject = Helpers.GetParentRigidBody(transform);
@@ -50,7 +51,7 @@ namespace Marus.Sensors.Primitive
         {
             position = measuredObject.position;
             orientation = measuredObject.rotation;
-            linearVelocity = measuredObject.transform.InverseTransformVector(measuredObject.velocity);
+            linearVelocity = measuredObject.transform.InverseTransformVector(measuredObject.linearVelocity);
             angularVelocity = measuredObject.angularVelocity;
             if (debug)
             {

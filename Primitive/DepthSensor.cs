@@ -14,6 +14,7 @@
 
 using System;
 using Marus.NoiseDistributions;
+using Marus.Core;
 
 namespace Marus.Sensors.Primitive
 {

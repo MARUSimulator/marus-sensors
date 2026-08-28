@@ -31,7 +31,7 @@ namespace Marus.Sensors.Core
 
         private static BufferPrecision DepthBufferPrecision = BufferPrecision.bit24;
 
-        public static (Camera[], CameraFrustum) SpawnDepthCameras(Transform transform, int numCameras, int WidthRes, float farPlane, 
+        public static (Camera[], CameraFrustum) SpawnDepthCameras(Transform transform, int numCameras, int WidthRes, float farPlane,
                 float nearPlane, float verticalAngle)
         {
             var frustumTemplate = new CameraFrustum(WidthRes, farPlane, nearPlane, 2 * Mathf.PI / numCameras, verticalAngle * Mathf.Deg2Rad);
@@ -93,8 +93,8 @@ namespace Marus.Sensors.Core
                 shader.SetTexture(kernelHandle, "depthImage" + i.ToString(), cameras[i].targetTexture);
                 shader.SetMatrix("CameraRotationMatrix" + i.ToString(), m);
             }
-        }        
-        
+        }
+
         public static void CustomRender(ScriptableRenderContext context, HDCamera camera)
         {
             // CustomPassUtils.RenderDepthFromCamera(context, camera.camera, LayerMask.GetMask("Default"));
@@ -102,7 +102,7 @@ namespace Marus.Sensors.Core
             // var cameraBuffer = new CommandBuffer { name="Render Camera" + camera.camera.name};
             // cameraBuffer.SetRenderTarget(camera.camera.targetTexture);
             // cameraBuffer.ClearRenderTarget(true, false, Color.black);
-        
+
             // cameraBuffer.BeginSample("Render camera" + camera.camera.name);
             // context.ExecuteCommandBuffer(cameraBuffer);
             // cameraBuffer.Clear();

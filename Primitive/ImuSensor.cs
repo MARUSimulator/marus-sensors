@@ -17,6 +17,7 @@ using Marus.NoiseDistributions;
 using Marus.Utils;
 using Std;
 using UnityEngine;
+using Marus.Core;
 
 namespace Marus.Sensors.Primitive
 {
@@ -105,7 +106,7 @@ namespace Marus.Sensors.Primitive
             double timeElapsed = Time.timeAsDouble - _lastSampleTime;
             _lastSampleTime = Time.timeAsDouble;
 
-            localVelocity = rb.transform.InverseTransformVector(rb.velocity);
+            localVelocity = rb.transform.InverseTransformVector(rb.linearVelocity);
             localVelocity[0]+=Noise.Sample(AccelerometerNoise);
             localVelocity[1]+=Noise.Sample(AccelerometerNoise);
             localVelocity[2]+=Noise.Sample(AccelerometerNoise);

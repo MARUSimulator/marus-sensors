@@ -17,12 +17,13 @@ using Marus.Networking;
 using Marus.NoiseDistributions;
 using Std;
 using UnityEngine;
+using Marus.Core;
 
 namespace Marus.Sensors.Primitive
 {
     public class GnssSensor : SensorBase
     {
-        
+
         public NoiseParameters measurementNoise;
 
         [Header("Precision")]
@@ -30,7 +31,7 @@ namespace Marus.Sensors.Primitive
         public float maximumOperatingDepth = 0.5f;
 
         [Header("Position info")]
-        
+
         [ReadOnly]
         public GeoPoint point;
         [ReadOnly]

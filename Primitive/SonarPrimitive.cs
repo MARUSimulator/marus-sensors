@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using UnityEngine;
+using Marus.Core;
 
 namespace Marus.Sensors.Primitive
 {
@@ -62,7 +63,7 @@ namespace Marus.Sensors.Primitive
             // float sonarAngle = sonar.eulerAngles.y;
 
             // if (sonarAngle>180)
-            // {   
+            // {
             //     sonarAngle -= 360;
 
             // }
@@ -72,7 +73,7 @@ namespace Marus.Sensors.Primitive
             // Debug.Log(angle);
 
 
-            Vector3 targetHeading = new Vector3(trackedObject.position.x, 0, trackedObject.position.z) - 
+            Vector3 targetHeading = new Vector3(trackedObject.position.x, 0, trackedObject.position.z) -
                                     new Vector3(sonar.position.x, 0, sonar.position.z);
             bearing = -Vector3.SignedAngle(targetHeading, sonar.forward, sonar.up);
 

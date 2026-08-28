@@ -14,7 +14,7 @@
 
 using UnityEngine;
 using UnityEngine.Rendering;
-
+using Marus.Core;
 namespace Marus.Sensors.Core
 {
     public class SphericalProjectionFilter: MonoBehaviour
