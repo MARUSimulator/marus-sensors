@@ -3,8 +3,9 @@ To install **MARUS2 Sensors** and its required core dependencies, add them direc
 ```json
 {
   "dependencies": {
-    "com.labust.marus2.core": "https://github.com/MARUSimulator/marus2-core.git",
-    "com.labust.marus2.sensors": "https://github.com/MARUSimulator/marus-sensors.git"
+    "com.marus2.proto": "https://github.com/MARUSimulator/marus2-proto.git#csharp",
+    "com.marus2.core": "https://github.com/MARUSimulator/marus2-core.git",
+    "com.marus2.sensors": "https://github.com/MARUSimulator/marus-sensors.git"
   }
 }
 ```
@@ -14,7 +15,7 @@ To install **MARUS2 Sensors** and its required core dependencies, add them direc
 # Sensor usage
 
 To use sensors with a data transmition adapter is neccessary to use gRPC integration scripts which enable communication with transmission tools.
-To establish a remote connection subscribe the desired tool to a topic listed in the "Address" property of the sensor in Unity. 
+To establish a remote connection subscribe the desired tool to a topic listed in the "Address" property of the sensor in Unity.
 
 
 
@@ -57,7 +58,7 @@ This sensor calculates the depth of an object relative to the water surface.
 
 ## DVL sensor
 
-This sensor measures the ground velocity of the device it's attached to, which is the velocity vector relative to the seafloor. The sensor casts an array of range sensors to determine the distance from the object to the seafloor. 
+This sensor measures the ground velocity of the device it's attached to, which is the velocity vector relative to the seafloor. The sensor casts an array of range sensors to determine the distance from the object to the seafloor.
 
 
 ## Sonar
