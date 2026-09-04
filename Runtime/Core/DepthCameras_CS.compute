@@ -1,5 +1,9 @@
-﻿#include "UnityCG.cginc"
+#include "UnityCG.cginc"
 #include "UnityShaderVariables.cginc"
+
+#pragma kernel DepthDummy
+[numthreads(1, 1, 1)]
+void DepthDummy(uint3 id : SV_DispatchThreadID) {}
 
 Texture2D<float4> depthImage0;
 Texture2D<float4> depthImage1;
@@ -104,22 +108,42 @@ float3 ImageToCartesian(float4x4 projMatrixInv, float4x4 rotationMatrix, Texture
 	return bodySpacePosition.xyz;
 }
 
+float3 ImageToCartesian(uint2 TexCoord, int cameraID) {
+	float3 res = float3(0, 0, 0);
+	if (cameraID == 0) {
+		res = ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix0, depthImage0, TexCoord);
+	}
+	else if (cameraID == 1) {
+		res = ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix1, depthImage1, TexCoord);
+	}
+	else if (cameraID == 2) {
+		res = ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix2, depthImage2, TexCoord);
+	}
+	else if (cameraID == 3) {
+		res = ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix3, depthImage3, TexCoord);
+	}
+	return res;
+}
+
 float3 ImagesToCartesian(uint2 TexCoord) {
+	float3 res = float3(0, 0, 0);
 	if (TexCoord.x < ImageWidthRes) {
-		return ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix0, depthImage0, TexCoord);
+		res = ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix0, depthImage0, TexCoord);
 	}
 	else if (TexCoord.x < 2 * ImageWidthRes) {
 		TexCoord.x -= ImageWidthRes;
-		return ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix1, depthImage1, TexCoord);
+		res = ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix1, depthImage1, TexCoord);
 	}
 	else if (TexCoord.x < 3 * ImageWidthRes) {
 		TexCoord.x -= 2 * ImageWidthRes;
-		return ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix2, depthImage2, TexCoord);
+		res = ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix2, depthImage2, TexCoord);
 	}
 	else if (TexCoord.x < 4 * ImageWidthRes) {
 		TexCoord.x -= 3 * ImageWidthRes;
-		return ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix3, depthImage3, TexCoord);
-	}/*else if(TexCoord.x < 5 * ImageWidthRes){
+		res = ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix3, depthImage3, TexCoord);
+	}
+	return res;
+}/*else if(TexCoord.x < 5 * ImageWidthRes){
 		TexCoord.x -= 4 * ImageWidthRes;
 		return ImageToCartesian(inv_CameraMatrix, CameraRotationMatrix4, depthImage4, TexCoord);
 	}else if(TexCoord.x < 6 * ImageWidthRes){

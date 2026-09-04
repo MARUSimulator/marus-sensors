@@ -1,11 +1,17 @@
 {
-  "name": "com.labust.marus2.sensors",
+  "name": "com.marus2.sensors",
   "version": "1.0.0",
   "displayName": "MARUS2 Sensors",
   "description": "Sensor modules for MARUS2.",
   "unity": "6000.3",
   "unityRelease": "23f1",
   "dependencies": {
-    "com.labust.marus2.core": "1.0.0"
+    "com.marus2.core": "1.0.0",
+    "com.marus-proto": "https://github.com/MARUSimulator/marus2-proto.git#csharp"
+  },
+  "author": {
+    "name": "LABUST",
+    "url": "http://labust.fer.hr/"
   }
+
 }

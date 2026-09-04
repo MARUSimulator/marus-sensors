@@ -32,7 +32,7 @@ namespace Marus.Sensors.Core
         private static BufferPrecision DepthBufferPrecision = BufferPrecision.bit24;
 
         public static (Camera[], CameraFrustum) SpawnDepthCameras(Transform transform, int numCameras, int WidthRes, float farPlane,
-                float nearPlane, float verticalAngle)
+                float nearPlane, float verticalAngle, BufferPrecision precision = BufferPrecision.bit24)
         {
             var frustumTemplate = new CameraFrustum(WidthRes, farPlane, nearPlane, 2 * Mathf.PI / numCameras, verticalAngle * Mathf.Deg2Rad);
             RenderTextureFormat format = RenderTextureFormat.Depth;
@@ -44,7 +44,7 @@ namespace Marus.Sensors.Core
                 CameraObject.transform.SetParent(transform);
                 CameraObject.transform.localRotation = Quaternion.Euler(0, i * 360.0f / numCameras, 0);
                 CameraObject.transform.localPosition = new Vector3(0, 0, 0);
-                CameraObject.SetActive(false);
+                CameraObject.SetActive(true);
                 //CameraObject.layer = LayerMask.NameToLayer(LidarLayer);
                 CameraObject.AddComponent<Camera>();
                 CameraObject.AddComponent<HDAdditionalCameraData>();
@@ -52,7 +52,7 @@ namespace Marus.Sensors.Core
                 if (cam.targetTexture == null)
                 {
                     var depthBuffer = new RenderTexture(frustumTemplate.pixelWidth, frustumTemplate.pixelHeight, 16, format);
-                    depthBuffer.depth = (int)DepthBufferPrecision;
+                    depthBuffer.depth = (int)precision;
                     cam.targetTexture = depthBuffer;
                 }
                 // cam.depth = -5;
@@ -61,7 +61,7 @@ namespace Marus.Sensors.Core
                 cam.aspect = frustumTemplate.aspectRatio;//Mathf.Tan(Mathf.PI / numbers) / Mathf.Tan(frustums._verticalAngle / 2.0f);
                 cam.fieldOfView = frustumTemplate.verticalAngle*Mathf.Rad2Deg;//Camera.HorizontalToVerticalFieldOfView(360.0f / numbers, cam.aspect);
                 cam.farClipPlane = frustumTemplate.farPlane;
-                cam.enabled = true;
+                cam.enabled = false;
                 cam.nearClipPlane = frustumTemplate.nearPlane;
                 cam.depthTextureMode = DepthTextureMode.Depth;
                 cam.clearFlags = CameraClearFlags.Depth;

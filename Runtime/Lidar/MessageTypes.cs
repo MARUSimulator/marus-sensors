@@ -13,6 +13,9 @@
 // limitations under the License.
 
 
+using System;
+using UnityEngine;
+
 namespace Marus.Sensors.Core
 {
 
@@ -78,6 +81,35 @@ namespace Marus.Sensors.Core
             row_step = 0;
             data = lidarFields;
             is_dense = false;
+        }
+
+        public Vector4[] ParseLidarPoints()
+        {
+            int offset = 24;
+            if (data == null || data.Length == 0) return Array.Empty<Vector4>();
+            Vector4[] points = new Vector4[data.Length / offset];
+
+            int pointIndex = 0;
+            for (int i = 0; i < data.Length; i += offset)
+            {
+                float x = 0;
+                float y = 0;
+                float z = 0;
+                float intensity = 0;
+
+                if (i + 4 <= data.Length)
+                    x = BitConverter.ToSingle(data, i);
+                if (i + 8 <= data.Length)
+                    y = BitConverter.ToSingle(data, i + 4);
+                if (i + 12 <= data.Length)
+                    z = BitConverter.ToSingle(data, i + 8);
+                if (i + 16 <= data.Length)
+                    intensity = BitConverter.ToSingle(data, i + 12);
+
+                points[pointIndex] = new Vector4(x, y, z, intensity);
+                pointIndex++;
+            }
+            return points;
         }
     }
 }
