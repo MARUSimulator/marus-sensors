@@ -59,6 +59,7 @@ namespace Marus.Sensors.Primitive
         private double _lastSampleTime;
 
 
+        #if UNITY_EDITOR
         new void Reset()
         {
             rb = GetComponent<Rigidbody>();
@@ -66,6 +67,7 @@ namespace Marus.Sensors.Primitive
             base.Reset();
             UpdateVehicle();
         }
+        #endif
 
         new void UpdateVehicle()
         {
