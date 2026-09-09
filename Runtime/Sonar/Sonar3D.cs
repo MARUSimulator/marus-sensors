@@ -25,8 +25,12 @@ using System.Threading;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.UI;
-using Sensorstreaming;
 using Marus.CustomInspector;
+#if UNITY_6000_5_OR_NEWER
+using ColliderId = UnityEngine.EntityId;
+#else
+using ColliderId = System.Int32;
+#endif
 
 namespace Marus.Sensors
 {
@@ -306,12 +310,20 @@ namespace Marus.Sensors
                 var field = _saver.GetType().GetField("objectClassesAndInstances");
                 if (field != null)
                 {
-                    var dict = field.GetValue(_saver) as Dictionary<int, (int, int)>;
+                    var dict = field.GetValue(_saver) as Dictionary<ColliderId, (int, int)>;
+#if UNITY_6000_5_OR_NEWER
+                    if (dict != null && dict.TryGetValue(hit.colliderEntityId, out var value))
+                    {
+                        sonarReading.ClassId = value.Item1;
+                        sonarReading.InstanceId = value.Item2;
+                    }
+#else
                     if (dict != null && dict.TryGetValue(hit.colliderInstanceID, out var value))
                     {
                         sonarReading.ClassId = value.Item1;
                         sonarReading.InstanceId = value.Item2;
                     }
+#endif
                 }
             }
 

@@ -21,6 +21,11 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.Rendering;
+#if UNITY_6000_5_OR_NEWER
+using ColliderId = UnityEngine.EntityId;
+#else
+using ColliderId = System.Int32;
+#endif
 
 namespace Marus.Sensors
 {
@@ -77,8 +82,8 @@ namespace Marus.Sensors
 
         // Decoupled Annotation caching to prevent reflection in the raycast loop
         private MonoBehaviour _saver;
-        private Dictionary<int, (int, int)> _cachedAnnotations;
-        private Dictionary<int, int> colliderLayer;
+        private Dictionary<ColliderId, (int, int)> _cachedAnnotations;
+        private Dictionary<ColliderId, int> colliderLayer;
 
         // Internal execution state
         private RaycastJobHelper<LidarReading> _raycastHelper;
@@ -91,7 +96,7 @@ namespace Marus.Sensors
         private void Start()
         {
             int totalRays = WidthRes * HeightRes;
-            colliderLayer = new Dictionary<int, int>();
+            colliderLayer = new Dictionary<ColliderId, int>();
 
             if (blackHoleLayers != 0)
             {
@@ -101,7 +106,11 @@ namespace Marus.Sensors
                     Collider instId = obj.GetComponent<Collider>();
                     if (instId)
                     {
+#if UNITY_6000_5_OR_NEWER
+                        colliderLayer[instId.GetEntityId()] = instId.gameObject.layer;
+#else
                         colliderLayer[instId.GetInstanceID()] = instId.gameObject.layer;
+#endif
                     }
                 }
             }
@@ -113,7 +122,7 @@ namespace Marus.Sensors
                 var field = _saver.GetType().GetField("objectClassesAndInstances");
                 if (field != null)
                 {
-                    _cachedAnnotations = field.GetValue(_saver) as Dictionary<int, (int, int)>;
+                    _cachedAnnotations = field.GetValue(_saver) as Dictionary<ColliderId, (int, int)>;
                 }
             }
 
@@ -222,15 +231,27 @@ namespace Marus.Sensors
         {
             var reading = new LidarReading();
 
-            // Fast O(1) dictionary lookup instead of reflection
-            if (_cachedAnnotations != null && _cachedAnnotations.TryGetValue(hit.colliderInstanceID, out var value))
+#if UNITY_6000_5_OR_NEWER
+            var colId = hit.colliderEntityId;
+            if (_cachedAnnotations != null && _cachedAnnotations.TryGetValue(colId, out var value))
             {
                 reading.ClassId = value.Item1;
                 reading.InstanceId = value.Item2;
             }
 
-            if (hit.colliderInstanceID != 0) reading.IsValid = true;
-            if (colliderLayer.Count > 0 && colliderLayer.ContainsKey(hit.colliderInstanceID)) reading.IsValid = false;
+            if (colId.IsValid()) reading.IsValid = true;
+            if (colliderLayer.Count > 0 && colliderLayer.ContainsKey(colId)) reading.IsValid = false;
+#else
+            var colId = hit.colliderInstanceID;
+            if (_cachedAnnotations != null && _cachedAnnotations.TryGetValue(colId, out var value))
+            {
+                reading.ClassId = value.Item1;
+                reading.InstanceId = value.Item2;
+            }
+
+            if (colId != 0) reading.IsValid = true;
+            if (colliderLayer.Count > 0 && colliderLayer.ContainsKey(colId)) reading.IsValid = false;
+#endif
 
             reading.Ring = index % HeightRes;
 
